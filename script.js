@@ -12,20 +12,20 @@ const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
 const clearCartBtn = document.getElementById("clear-cart-btn");
 
-// --- Utility to get cart from sessionStorage ---
+// --- Utility: get cart from sessionStorage ---
 function getCart() {
   const cart = sessionStorage.getItem("cart");
   return cart ? JSON.parse(cart) : [];
 }
 
-// --- Utility to save cart ---
+// --- Utility: save cart to sessionStorage ---
 function saveCart(cart) {
   sessionStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// --- Render product list ---
+// --- Render products ---
 function renderProducts() {
-  productList.innerHTML = ""; // clear before re-render
+  productList.innerHTML = ""; // clear list
   products.forEach((product) => {
     const li = document.createElement("li");
     li.innerHTML = `${product.name} - $${product.price} 
@@ -33,9 +33,8 @@ function renderProducts() {
     productList.appendChild(li);
   });
 
-  // attach event listeners for buttons
-  const addButtons = document.querySelectorAll(".add-to-cart-btn");
-  addButtons.forEach((btn) => {
+  // attach event listeners
+  document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = parseInt(btn.dataset.id);
       addToCart(id);
@@ -43,7 +42,7 @@ function renderProducts() {
   });
 }
 
-// --- Render cart list ---
+// --- Render cart from sessionStorage ---
 function renderCart() {
   const cart = getCart();
   cartList.innerHTML = ""; // clear before rendering
@@ -54,13 +53,13 @@ function renderCart() {
   });
 }
 
-// --- Add item to cart ---
+// --- Add product to cart ---
 function addToCart(productId) {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
 
-  const cart = getCart();
-  cart.push(product);
+  let cart = getCart();
+  cart.push(product); // allow duplicates
   saveCart(cart);
   renderCart();
 }
@@ -71,10 +70,10 @@ function clearCart() {
   renderCart();
 }
 
-// --- Event listener for clear cart ---
+// --- Event listener ---
 clearCartBtn.addEventListener("click", clearCart);
 
-// --- Initial render ---
+// --- Initial load ---
 renderProducts();
 renderCart();
 
